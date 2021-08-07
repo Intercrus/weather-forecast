@@ -1,6 +1,7 @@
 import requests
 import click
 import re
+import weather_icons
 from transliterate import translit
 from geocoder import ip
 from bs4 import BeautifulSoup
@@ -8,6 +9,24 @@ from bs4 import BeautifulSoup
 
 # out: ["Tomsk", "Tomsk Republic", "RU"] ↓
 CITY, REPUBLIC, COUNTRY = ip("me").address.split(", ")
+TEMPERATURE_TYPES = {
+    "Закат солнца": None, # ?
+    "Восход солнца": None, # ?
+    "Преимущественно облачно": None,
+    "Преимущественно ясно": None,
+    "Преимущественно ясно и слабый дождь": None,
+    "Преимущественно ясно и кратковременные осадки": None,
+    "Ясно": sun,
+    "Частично облачно": None,
+    "Частично облачно и слабый дождь": None,
+    "Частично облачно и кратковременные осадки": None,
+    "Облачно и кратковременные осадки": None,
+    "Облачно и временами осадки": None,
+    "Облачно и дождь": None,
+    "Облачно и кратковременные осадки": None,
+    "Облачно и слабый дождь": None,
+    "Облачно": None
+}
 
 
 def get_html(url):  # Complete
@@ -31,6 +50,13 @@ def get_weather(html):  # Complete
     feels_like = soup.find("div", class_="right").find("strong").text
 
     return temperature.text, wind_speed.text, weather, feels_like
+
+
+def weather_handling(weather):
+    for type in TEMPERATURE_TYPES:
+        if weather == type:
+
+
 
 
 def main():

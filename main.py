@@ -1,10 +1,16 @@
 import requests
 import click
 import re
-import weather_icons
+
+from weather_icons import sun, partly_cloudy, cloudy_and_raining, \
+    cloudy_and_light_rain, cloudy
+
 from transliterate import translit
 from geocoder import ip
 from bs4 import BeautifulSoup
+
+
+# -----------------------------------------------------------------------------
 
 
 # out: ["Tomsk", "Tomsk Republic", "RU"] ↓
@@ -17,16 +23,19 @@ TEMPERATURE_TYPES = {
     "Преимущественно ясно и слабый дождь": None,
     "Преимущественно ясно и кратковременные осадки": None,
     "Ясно": sun,
-    "Частично облачно": None,
+    "Частично облачно": partly_cloudy,
     "Частично облачно и слабый дождь": None,
     "Частично облачно и кратковременные осадки": None,
-    "Облачно и кратковременные осадки": None,
-    "Облачно и временами осадки": None,
-    "Облачно и дождь": None,
-    "Облачно и кратковременные осадки": None,
-    "Облачно и слабый дождь": None,
-    "Облачно": None
+    "Облачно и кратковременные осадки": cloudy_and_light_rain,
+    "Облачно и временами осадки": cloudy_and_light_rain,
+    "Облачно и дождь": cloudy_and_raining,
+    "Облачно и кратковременные осадки": cloudy_and_light_rain,
+    "Облачно и слабый дождь": cloudy_and_light_rain,
+    "Облачно": cloudy,
 }
+
+
+# -----------------------------------------------------------------------------
 
 
 def get_html(url):  # Complete
@@ -55,7 +64,7 @@ def get_weather(html):  # Complete
 def weather_handling(weather):
     for type in TEMPERATURE_TYPES:
         if weather == type:
-
+            return TEMPERATURE_TYPES[weather]
 
 
 
@@ -67,6 +76,7 @@ def main():
     f"""
 {translit(CITY, "ru")}
 {weather}
+{weather_handling(weather)}
     """)
 
 

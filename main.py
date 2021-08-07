@@ -31,7 +31,8 @@ TEMPERATURE_TYPES = {
     "Облачно и дождь": cloudy_and_raining,
     "Облачно и кратковременные осадки": cloudy_and_light_rain,
     "Облачно и слабый дождь": cloudy_and_light_rain,
-    "Облачно": cloudy,
+    "Облачно":   lambda t, w, f: \
+    f"       ___      {t}°\n    .__.  )__   Облачно\n .-(    )_.__)  Ощущается как: {f}\n(___.__.___)",
 }
 
 
@@ -55,17 +56,16 @@ def get_weather(html):  # Complete
     raw_weather = soup.find("div", class_="right").next_element
     weather = re.sub("\r|\n|\t", "", str(raw_weather)).lstrip()
 
-    # out: "+18°"
+    # out: "+18°" ↓
     feels_like = soup.find("div", class_="right").find("strong").text
 
     return temperature.text, wind_speed.text, weather, feels_like
 
 
-def weather_handling(weather):
+def weather_handling(weather, temp, wind, feels):
     for type in TEMPERATURE_TYPES:
         if weather == type:
-            return TEMPERATURE_TYPES[weather]
-
+            return TEMPERATURE_TYPES[weather](temp, wind, feels)
 
 
 def main():
@@ -75,8 +75,8 @@ def main():
     print(
     f"""
 {translit(CITY, "ru")}
-{weather}
-{weather_handling(weather)}
+{weather_handling(weather, temperature, wind_speed, feels_like)}
+
     """)
 
 
